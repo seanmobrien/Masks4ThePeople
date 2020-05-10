@@ -1,0 +1,477 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Masks4ThePeopleModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Color">
+          <Key>
+            <PropertyRef Name="ColorId" />
+          </Key>
+          <Property Name="ColorId" Type="tinyint" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FilamentRolls" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Mask">
+          <Key>
+            <PropertyRef Name="MaskId" />
+          </Key>
+          <Property Name="MaskId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="PrintedOn" Type="datetime" />
+          <Property Name="PrinterId" Type="tinyint" />
+          <Property Name="ColorId" Type="tinyint" Nullable="false" />
+          <Property Name="SizeId" Type="tinyint" Nullable="false" />
+          <Property Name="SoldOn" Type="datetime" />
+          <Property Name="StrapsAddedOn" Type="datetime" />
+          <Property Name="PaddingAddedOn" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Masks4ThePeople.dbo.Mask_Order' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Mask_Order">
+          <Key>
+            <PropertyRef Name="OrderId" />
+            <PropertyRef Name="MaskId" />
+          </Key>
+          <Property Name="OrderId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="MaskId" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="OrderId" />
+          </Key>
+          <Property Name="OrderId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="OrderProviderId" Type="tinyint" Nullable="false" />
+          <Property Name="CreatedOn" Type="datetime" Nullable="false" />
+          <Property Name="PaidOn" Type="datetime" />
+          <Property Name="EmailedOn" Type="datetime" />
+          <Property Name="ShippedOn" Type="datetime" />
+          <Property Name="FeedbackLeftOn" Type="datetime" />
+          <Property Name="Amount" Type="decimal" Precision="16" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="OrderProvider">
+          <Key>
+            <PropertyRef Name="OrderProviderId" />
+          </Key>
+          <Property Name="OrderProviderId" Type="tinyint" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="WebsiteUrl" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Printer">
+          <Key>
+            <PropertyRef Name="PrinterId" />
+          </Key>
+          <Property Name="PrinterId" Type="tinyint" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MasksPerDay" Type="numeric" Precision="14" Scale="4" Nullable="false" />
+          <Property Name="ActiveColorId" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Size">
+          <Key>
+            <PropertyRef Name="SizeId" />
+          </Key>
+          <Property Name="SizeId" Type="tinyint" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="10" />
+          <Property Name="TimeToPrint" Type="decimal" Precision="10" Scale="8" />
+        </EntityType>
+        <Association Name="FK_Mask_Color">
+          <End Role="Color" Type="Self.Color" Multiplicity="1" />
+          <End Role="Mask" Type="Self.Mask" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Color">
+              <PropertyRef Name="ColorId" />
+            </Principal>
+            <Dependent Role="Mask">
+              <PropertyRef Name="ColorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Mask_Order_Mask">
+          <End Role="Mask" Type="Self.Mask" Multiplicity="1" />
+          <End Role="Mask_Order" Type="Self.Mask_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Mask">
+              <PropertyRef Name="MaskId" />
+            </Principal>
+            <Dependent Role="Mask_Order">
+              <PropertyRef Name="MaskId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Mask_Order_Order">
+          <End Role="Order" Type="Self.Order" Multiplicity="1" />
+          <End Role="Mask_Order" Type="Self.Mask_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="OrderId" />
+            </Principal>
+            <Dependent Role="Mask_Order">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Mask_Printer">
+          <End Role="Printer" Type="Self.Printer" Multiplicity="0..1" />
+          <End Role="Mask" Type="Self.Mask" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Printer">
+              <PropertyRef Name="PrinterId" />
+            </Principal>
+            <Dependent Role="Mask">
+              <PropertyRef Name="PrinterId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Mask_Size">
+          <End Role="Size" Type="Self.Size" Multiplicity="1" />
+          <End Role="Mask" Type="Self.Mask" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Size">
+              <PropertyRef Name="SizeId" />
+            </Principal>
+            <Dependent Role="Mask">
+              <PropertyRef Name="SizeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Order_OrderProvider">
+          <End Role="OrderProvider" Type="Self.OrderProvider" Multiplicity="1" />
+          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrderProvider">
+              <PropertyRef Name="OrderProviderId" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="OrderProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Printer_Color">
+          <End Role="Color" Type="Self.Color" Multiplicity="1" />
+          <End Role="Printer" Type="Self.Printer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Color">
+              <PropertyRef Name="ColorId" />
+            </Principal>
+            <Dependent Role="Printer">
+              <PropertyRef Name="ActiveColorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Masks4ThePeopleModelStoreContainer">
+          <EntitySet Name="Color" EntityType="Self.Color" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Mask" EntityType="Self.Mask" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Order" EntityType="Self.Order" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrderProvider" EntityType="Self.OrderProvider" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Printer" EntityType="Self.Printer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Size" EntityType="Self.Size" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Mask_Order" EntityType="Self.Mask_Order" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Mask_Order].[OrderId] AS [OrderId], 
+    [Mask_Order].[MaskId] AS [MaskId]
+    FROM [dbo].[Mask_Order] AS [Mask_Order]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Mask_Color" Association="Self.FK_Mask_Color">
+            <End Role="Color" EntitySet="Color" />
+            <End Role="Mask" EntitySet="Mask" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Mask_Order_Mask" Association="Self.FK_Mask_Order_Mask">
+            <End Role="Mask" EntitySet="Mask" />
+            <End Role="Mask_Order" EntitySet="Mask_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Mask_Order_Order" Association="Self.FK_Mask_Order_Order">
+            <End Role="Order" EntitySet="Order" />
+            <End Role="Mask_Order" EntitySet="Mask_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Mask_Printer" Association="Self.FK_Mask_Printer">
+            <End Role="Printer" EntitySet="Printer" />
+            <End Role="Mask" EntitySet="Mask" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Mask_Size" Association="Self.FK_Mask_Size">
+            <End Role="Size" EntitySet="Size" />
+            <End Role="Mask" EntitySet="Mask" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_OrderProvider" Association="Self.FK_Order_OrderProvider">
+            <End Role="OrderProvider" EntitySet="OrderProvider" />
+            <End Role="Order" EntitySet="Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Printer_Color" Association="Self.FK_Printer_Color">
+            <End Role="Color" EntitySet="Color" />
+            <End Role="Printer" EntitySet="Printer" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Masks4ThePeopleModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Color">
+          <Key>
+            <PropertyRef Name="ColorId" />
+          </Key>
+          <Property Name="ColorId" Type="Byte" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FilamentRolls" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Masks" Relationship="Self.FK_Mask_Color" FromRole="Color" ToRole="Mask" />
+          <NavigationProperty Name="Printers" Relationship="Self.FK_Printer_Color" FromRole="Color" ToRole="Printer" />
+        </EntityType>
+        <EntityType Name="Mask">
+          <Key>
+            <PropertyRef Name="MaskId" />
+          </Key>
+          <Property Name="MaskId" Type="Guid" Nullable="false" />
+          <Property Name="PrintedOn" Type="DateTime" Precision="3" />
+          <Property Name="PrinterId" Type="Byte" />
+          <Property Name="ColorId" Type="Byte" Nullable="false" />
+          <Property Name="SizeId" Type="Byte" Nullable="false" />
+          <Property Name="SoldOn" Type="DateTime" Precision="3" />
+          <Property Name="StrapsAddedOn" Type="DateTime" Precision="3" />
+          <Property Name="PaddingAddedOn" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Color" Relationship="Self.FK_Mask_Color" FromRole="Mask" ToRole="Color" />
+          <NavigationProperty Name="Printer" Relationship="Self.FK_Mask_Printer" FromRole="Mask" ToRole="Printer" />
+          <NavigationProperty Name="Size" Relationship="Self.FK_Mask_Size" FromRole="Mask" ToRole="Size" />
+          <NavigationProperty Name="Orders" Relationship="Self.Mask_Order" FromRole="Mask" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="OrderId" />
+          </Key>
+          <Property Name="OrderId" Type="Guid" Nullable="false" />
+          <Property Name="OrderProviderId" Type="Byte" Nullable="false" />
+          <Property Name="CreatedOn" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PaidOn" Type="DateTime" Precision="3" />
+          <Property Name="EmailedOn" Type="DateTime" Precision="3" />
+          <Property Name="ShippedOn" Type="DateTime" Precision="3" />
+          <Property Name="FeedbackLeftOn" Type="DateTime" Precision="3" />
+          <Property Name="Amount" Type="Decimal" Precision="16" Scale="2" Nullable="false" />
+          <NavigationProperty Name="OrderProvider" Relationship="Self.FK_Order_OrderProvider" FromRole="Order" ToRole="OrderProvider" />
+          <NavigationProperty Name="Masks" Relationship="Self.Mask_Order" FromRole="Order" ToRole="Mask" />
+        </EntityType>
+        <EntityType Name="OrderProvider">
+          <Key>
+            <PropertyRef Name="OrderProviderId" />
+          </Key>
+          <Property Name="OrderProviderId" Type="Byte" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="WebsiteUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Orders" Relationship="Self.FK_Order_OrderProvider" FromRole="OrderProvider" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="Printer">
+          <Key>
+            <PropertyRef Name="PrinterId" />
+          </Key>
+          <Property Name="PrinterId" Type="Byte" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MasksPerDay" Type="Decimal" Precision="14" Scale="4" Nullable="false" />
+          <Property Name="ActiveColorId" Type="Byte" Nullable="false" />
+          <NavigationProperty Name="Color" Relationship="Self.FK_Printer_Color" FromRole="Printer" ToRole="Color" />
+          <NavigationProperty Name="Masks" Relationship="Self.FK_Mask_Printer" FromRole="Printer" ToRole="Mask" />
+        </EntityType>
+        <EntityType Name="Size">
+          <Key>
+            <PropertyRef Name="SizeId" />
+          </Key>
+          <Property Name="SizeId" Type="Byte" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TimeToPrint" Type="Decimal" Precision="10" Scale="8" />
+          <NavigationProperty Name="Masks" Relationship="Self.FK_Mask_Size" FromRole="Size" ToRole="Mask" />
+        </EntityType>
+        <Association Name="FK_Mask_Color">
+          <End Role="Color" Type="Self.Color" Multiplicity="1" />
+          <End Role="Mask" Type="Self.Mask" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Color">
+              <PropertyRef Name="ColorId" />
+            </Principal>
+            <Dependent Role="Mask">
+              <PropertyRef Name="ColorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Printer_Color">
+          <End Role="Color" Type="Self.Color" Multiplicity="1" />
+          <End Role="Printer" Type="Self.Printer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Color">
+              <PropertyRef Name="ColorId" />
+            </Principal>
+            <Dependent Role="Printer">
+              <PropertyRef Name="ActiveColorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Mask_Printer">
+          <End Role="Printer" Type="Self.Printer" Multiplicity="0..1" />
+          <End Role="Mask" Type="Self.Mask" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Printer">
+              <PropertyRef Name="PrinterId" />
+            </Principal>
+            <Dependent Role="Mask">
+              <PropertyRef Name="PrinterId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Mask_Size">
+          <End Role="Size" Type="Self.Size" Multiplicity="1" />
+          <End Role="Mask" Type="Self.Mask" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Size">
+              <PropertyRef Name="SizeId" />
+            </Principal>
+            <Dependent Role="Mask">
+              <PropertyRef Name="SizeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Order_OrderProvider">
+          <End Role="OrderProvider" Type="Self.OrderProvider" Multiplicity="1" />
+          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrderProvider">
+              <PropertyRef Name="OrderProviderId" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="OrderProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Mask_Order">
+          <End Role="Mask" Type="Self.Mask" Multiplicity="*" />
+          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="Masks4ThePeopleEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Colors" EntityType="Self.Color" />
+          <EntitySet Name="Masks" EntityType="Self.Mask" />
+          <EntitySet Name="Orders" EntityType="Self.Order" />
+          <EntitySet Name="OrderProviders" EntityType="Self.OrderProvider" />
+          <EntitySet Name="Printers" EntityType="Self.Printer" />
+          <EntitySet Name="Sizes" EntityType="Self.Size" />
+          <AssociationSet Name="FK_Mask_Color" Association="Self.FK_Mask_Color">
+            <End Role="Color" EntitySet="Colors" />
+            <End Role="Mask" EntitySet="Masks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Printer_Color" Association="Self.FK_Printer_Color">
+            <End Role="Color" EntitySet="Colors" />
+            <End Role="Printer" EntitySet="Printers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Mask_Printer" Association="Self.FK_Mask_Printer">
+            <End Role="Printer" EntitySet="Printers" />
+            <End Role="Mask" EntitySet="Masks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Mask_Size" Association="Self.FK_Mask_Size">
+            <End Role="Size" EntitySet="Sizes" />
+            <End Role="Mask" EntitySet="Masks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_OrderProvider" Association="Self.FK_Order_OrderProvider">
+            <End Role="OrderProvider" EntitySet="OrderProviders" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="Mask_Order" Association="Self.Mask_Order">
+            <End Role="Mask" EntitySet="Masks" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Masks4ThePeopleModelStoreContainer" CdmEntityContainer="Masks4ThePeopleEntities">
+          <EntitySetMapping Name="Colors">
+            <EntityTypeMapping TypeName="Masks4ThePeopleModel.Color">
+              <MappingFragment StoreEntitySet="Color">
+                <ScalarProperty Name="ColorId" ColumnName="ColorId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="FilamentRolls" ColumnName="FilamentRolls" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Masks">
+            <EntityTypeMapping TypeName="Masks4ThePeopleModel.Mask">
+              <MappingFragment StoreEntitySet="Mask">
+                <ScalarProperty Name="MaskId" ColumnName="MaskId" />
+                <ScalarProperty Name="PrintedOn" ColumnName="PrintedOn" />
+                <ScalarProperty Name="PrinterId" ColumnName="PrinterId" />
+                <ScalarProperty Name="ColorId" ColumnName="ColorId" />
+                <ScalarProperty Name="SizeId" ColumnName="SizeId" />
+                <ScalarProperty Name="SoldOn" ColumnName="SoldOn" />
+                <ScalarProperty Name="StrapsAddedOn" ColumnName="StrapsAddedOn" />
+                <ScalarProperty Name="PaddingAddedOn" ColumnName="PaddingAddedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="Masks4ThePeopleModel.Order">
+              <MappingFragment StoreEntitySet="Order">
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="OrderProviderId" ColumnName="OrderProviderId" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="PaidOn" ColumnName="PaidOn" />
+                <ScalarProperty Name="EmailedOn" ColumnName="EmailedOn" />
+                <ScalarProperty Name="ShippedOn" ColumnName="ShippedOn" />
+                <ScalarProperty Name="FeedbackLeftOn" ColumnName="FeedbackLeftOn" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrderProviders">
+            <EntityTypeMapping TypeName="Masks4ThePeopleModel.OrderProvider">
+              <MappingFragment StoreEntitySet="OrderProvider">
+                <ScalarProperty Name="OrderProviderId" ColumnName="OrderProviderId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="WebsiteUrl" ColumnName="WebsiteUrl" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Printers">
+            <EntityTypeMapping TypeName="Masks4ThePeopleModel.Printer">
+              <MappingFragment StoreEntitySet="Printer">
+                <ScalarProperty Name="PrinterId" ColumnName="PrinterId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="MasksPerDay" ColumnName="MasksPerDay" />
+                <ScalarProperty Name="ActiveColorId" ColumnName="ActiveColorId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sizes">
+            <EntityTypeMapping TypeName="Masks4ThePeopleModel.Size">
+              <MappingFragment StoreEntitySet="Size">
+                <ScalarProperty Name="SizeId" ColumnName="SizeId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TimeToPrint" ColumnName="TimeToPrint" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="Mask_Order" TypeName="Masks4ThePeopleModel.Mask_Order" StoreEntitySet="Mask_Order">
+            <EndProperty Name="Mask">
+              <ScalarProperty Name="MaskId" ColumnName="MaskId" />
+            </EndProperty>
+            <EndProperty Name="Order">
+              <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

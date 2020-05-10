@@ -1,0 +1,44 @@
+{
+  "Sample": {
+    "Title": "Line of Business app simplifying mask creation",
+    "Level": 400,
+    "Client": ".NET Framework 4.5, ASP.NET"
+  },
+  "AppRegistrations": [
+    {
+      "x-ms-id": "Masks4ThePeople",
+      "x-ms-name": "Masks4ThePeople",
+      "x-ms-version": "2.0",
+      "replyUrlsWithType": [
+        {
+          "url": "https://localhost:44368/",
+          "type": "Web"
+        }
+      ],
+      "oauth2AllowImplicitFlow": true,
+      "requiredResourceAccess": [
+        {
+          "x-ms-resourceAppName": "Microsoft Graph",
+          "resourceAppId": "00000003-0000-0000-c000-000000000000",
+          "resourceAccess": [
+            {
+              "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+              "type": "Scope",
+              "x-ms-name": "user.read"
+            }
+          ]
+        }
+      ],
+      "codeConfigurations": [	
+        {
+	        "settingFile": "/webapp/Web.config",
+          "replaceTokens": {
+            "appId": "Masks4ThePeople",
+            "tenantId": "common",
+            "authorityEndpointHost": "https://login.microsoftonline.com/"
+          }
+	      }
+     ]
+    }
+  ]
+}
